@@ -32,13 +32,16 @@ app.post("/users", (request, response) => {
   if (verifyUserNameAlreadyExist) {
     return response.status(400).json({ error: "User Already Exist" });
   }
-  users.push({
+
+  const userCreate = {
     id: uuidv4(),
     name,
     username,
     todos: [],
-  });
-  return response.status(201).json(users[0]);
+  };
+
+  users.push(userCreate);
+  return response.status(201).json(userCreate);
 });
 
 app.get("/todos", checksExistsUserAccount, (request, response) => {
@@ -50,14 +53,16 @@ app.post("/todos", checksExistsUserAccount, (request, response) => {
   const { user } = request;
   const { deadline, title } = request.body;
 
-  user.todos.push({
+  const todo = {
     id: uuidv4(),
     title,
     done: false,
     deadline: new Date(deadline),
     created_at: new Date(),
-  });
-  return response.status(201).json(user.todos[0]);
+  };
+
+  user.todos.push(todo);
+  return response.status(201).json(todo);
 });
 
 app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
@@ -71,7 +76,7 @@ app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
   }
 
   todo.title = title;
-  deadline = new Date(deadline);
+  todo.deadline = new Date(deadline);
   return response.json(todo);
 });
 
@@ -85,6 +90,7 @@ app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
     });
   }
   verifyExistTodos.done = true;
+  return response.json(verifyExistTodos);
 });
 
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
